@@ -186,5 +186,4 @@ func TestDecideValidity(t *testing.T) {
 	}
 }
 
-// KeywordProcessor must satisfy the Processor interface.
 var _ Processor = (*KeywordProcessor)(nil)

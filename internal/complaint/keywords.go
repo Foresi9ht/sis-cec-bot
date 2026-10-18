@@ -1,20 +1,5 @@
 package complaint
 
-// Keyword lists used by KeywordProcessor, in Russian, English and Kazakh.
-//
-// Matching rules (see matcher.go):
-//   - the text is lower-cased and split into words;
-//   - a keyword matches when a word starts with it, so "нарушен" finds
-//     "нарушение" and "нарушения" (these are word stems);
-//   - a keyword ending with "$" must match a whole word, which is used for
-//     short words that would otherwise match too much ("суп$" must not match
-//     "супер", "кран$" must not match "кранов");
-//   - a keyword may contain several words ("качество еды").
-//
-// Duplicates are removed when the lists are compiled.
-
-// validKeywords point to the CEC's jurisdiction: elections, rights violations,
-// misconduct of staff and student organizations, administration.
 var validKeywords = []string{
 	// elections
 	"выборы", "кандидат", "голосован", "агитац", "фальсификац",
@@ -52,8 +37,6 @@ var validKeywords = []string{
 	"әділетсіз", "бюрократ", "ашықтық", "тәртіптік",
 }
 
-// invalidKeywords point to operational matters outside the CEC's jurisdiction:
-// food, cleaning, plumbing, furniture, living conditions, technical services.
 var invalidKeywords = []string{
 	// food
 	"еда$", "меню", "суп$", "обед", "завтрак", "ужин", "вкус", "готовят",
@@ -95,8 +78,6 @@ var invalidKeywords = []string{
 	"жалықтырарлық", "аз іс-шара",
 }
 
-// urgentKeywords raise the priority to HIGH: threats, violence, corruption,
-// discrimination, falsification, food safety, unlawful eviction, smoking.
 var urgentKeywords = []string{
 	// physical threat
 	"срочно", "немедленно", "угроза", "насилие", "принужден", "давлен",
@@ -142,7 +123,6 @@ var urgentKeywords = []string{
 	"ғимарат ішінде темекі",
 }
 
-// mediumKeywords raise the priority to MEDIUM when no urgent keyword is found.
 var mediumKeywords = []string{
 	// violations
 	"нарушен", "жалоб", "проблем", "некорректн", "несправедлив",

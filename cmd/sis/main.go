@@ -1,5 +1,3 @@
-// Command sis is a small demo of the complaint-processing core: it creates
-// several complaints, processes them and prints the results.
 package main
 
 import (
@@ -35,7 +33,7 @@ func main() {
 		},
 		{
 			Category: complaint.CategoryOther,
-			Message:  "коротко", // too short: rejected by validation
+			Message:  "коротко",
 		},
 	}
 

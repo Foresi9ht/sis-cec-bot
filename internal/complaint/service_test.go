@@ -5,14 +5,12 @@ import (
 	"testing"
 )
 
-// stubProcessor returns a fixed result for every complaint.
 type stubProcessor struct {
 	result Result
 }
 
 func (s stubProcessor) Process(Input) (Result, error) { return s.result, nil }
 
-// failingProcessor always fails.
 type failingProcessor struct {
 	err error
 }
@@ -89,7 +87,6 @@ func TestService_Create_InvalidInput(t *testing.T) {
 		t.Errorf("%d complaints stored after only invalid input, want 0", got)
 	}
 
-	// A rejected input must not use up an ID.
 	c, err := svc.Create(otherInput("Достаточно длинное сообщение"))
 	if err != nil {
 		t.Fatal(err)
@@ -141,7 +138,6 @@ func TestService_Process_Success(t *testing.T) {
 		t.Fatalf("Process() unexpected error: %v", err)
 	}
 
-	// Correctness of the result.
 	if got.Result == nil {
 		t.Fatal("Result is nil after processing")
 	}
@@ -150,12 +146,10 @@ func TestService_Process_Success(t *testing.T) {
 		t.Errorf("Result = %+v, want %+v", *got.Result, want)
 	}
 
-	// State after processing.
 	if got.Status != StatusCompleted {
 		t.Errorf("Status = %s, want %s", got.Status, StatusCompleted)
 	}
 
-	// The stored complaint has the same status and result.
 	stored, err := svc.Get(created.ID)
 	if err != nil {
 		t.Fatal(err)
@@ -189,7 +183,6 @@ func TestService_Process_TwiceIsRejected(t *testing.T) {
 		t.Fatalf("second Process() error = %v, want ErrInvalidTransition", err)
 	}
 
-	// The rejected operation must not change anything.
 	after, err := svc.Get(created.ID)
 	if err != nil {
 		t.Fatal(err)
@@ -226,7 +219,6 @@ func TestService_Process_ProcessorFailure(t *testing.T) {
 		t.Errorf("Result = %+v, want nil for a failed complaint", got.Result)
 	}
 
-	// failed is terminal: it cannot be processed again.
 	if _, err := svc.Process(created.ID); !errors.Is(err, ErrInvalidTransition) {
 		t.Errorf("Process() of a failed complaint error = %v, want ErrInvalidTransition", err)
 	}
@@ -274,7 +266,6 @@ func TestService_MultipleIndependentComplaints(t *testing.T) {
 		ids[i] = c.ID
 	}
 
-	// Process only the middle complaint: the others must stay untouched.
 	if _, err := svc.Process(ids[1]); err != nil {
 		t.Fatal(err)
 	}
@@ -288,7 +279,6 @@ func TestService_MultipleIndependentComplaints(t *testing.T) {
 		}
 	}
 
-	// Process the rest and check that every complaint has its own data and result.
 	for _, i := range []int{0, 2} {
 		if _, err := svc.Process(ids[i]); err != nil {
 			t.Fatal(err)
@@ -322,7 +312,6 @@ func TestService_Get_ReturnsACopy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Change everything in the copy that was returned.
 	got, err := svc.Get(created.ID)
 	if err != nil {
 		t.Fatal(err)
@@ -348,7 +337,7 @@ func TestService_Get_ReturnsACopy(t *testing.T) {
 
 func TestService_List_IsOrderedByID(t *testing.T) {
 	svc := newTestService()
-	const n = 30 // enough for Go's random map order to show if the sort were missing
+	const n = 30
 	for i := 0; i < n; i++ {
 		if _, err := svc.Create(otherInput("Достаточно длинное сообщение")); err != nil {
 			t.Fatal(err)
